@@ -1,0 +1,262 @@
+{% extends 'base.html' %}
+{% block title %}Alterar Usuário{% endblock %}
+{% block head_extra %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css">
+<style>
+    #fotoPreview {
+        object-fit: cover;
+        width: 180px;
+        height: 180px;
+    }
+    #cropImage {
+        max-height: 60vh;
+    }
+</style>
+{% endblock head_extra %}
+{% block content %}
+<div class="row p-5 bg-light">
+    <h3>Atualizar Usuário</h3>
+    <form method="post" enctype="multipart/form-data" class="row g-3">
+        {% csrf_token %}
+        <div class="col-12 col-lg-6">
+            <h5>Dados de Acesso</h5>
+            {{ form.as_p }}
+        </div>
+        <div class="col-12 col-lg-6">
+            <h5>Perfil</h5>
+            <div class="mb-3">
+                <label class="form-label d-block">Foto</label>
+                <img
+                    src="{{ perfil_form.instance.foto_url }}"
+                    alt="Foto do perfil"
+                    class="img-thumbnail mb-2"
+                    id="fotoPreview"
+                    data-placeholder="{{ foto_placeholder }}"
+                >
+                <div class="d-flex gap-2">
+                    {% with input_id=perfil_form.foto.id_for_label %}
+                    <label class="btn btn-secondary btn-sm mb-0" for="{{ input_id }}">Atualizar foto</label>
+                    {% endwith %}
+                    <button type="button" class="btn btn-outline-danger btn-sm" id="removeFotoBtn">Remover foto</button>
+                </div>
+                <div class="d-none" id="fotoWidgetWrapper">
+                    {{ perfil_form.foto }}
+                </div>
+                {% if perfil_form.foto.errors %}
+                    {% for error in perfil_form.foto.errors %}
+                        <div class="text-danger small">{{ error }}</div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            {{ perfil_form.non_field_errors }}
+            {% for field in perfil_form %}
+                {% if field.name != 'foto' %}
+                    <div class="mb-3">
+                        {{ field.label_tag }}
+                        {{ field }}
+                        {% if field.help_text %}
+                            <small class="form-text text-muted">{{ field.help_text }}</small>
+                        {% endif %}
+                        {% for error in field.errors %}
+                            <div class="text-danger small">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <div class="col-12 mt-3">
+            <button type="submit" class="btn btn-primary mt-3">Alterar</button>
+        </div>
+    </form>
+</div>
+
+<div class="modal fade" id="cropModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Recortar foto</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body">
+                <div class="img-container">
+                    <img id="cropImage" class="img-fluid" alt="Área de recorte">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelCrop">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="confirmCrop">Aplicar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const wrapper = document.getElementById('fotoWidgetWrapper');
+    if (!wrapper) {
+        return;
+    }
+    const fileInput = wrapper.querySelector('input[type="file"]');
+    const clearCheckbox = wrapper.querySelector('input[type="checkbox"]');
+    const clearLabel = clearCheckbox ? wrapper.querySelector('label[for="' + clearCheckbox.id + '"]') : null;
+    const preview = document.getElementById('fotoPreview');
+    const placeholder = preview ? preview.dataset.placeholder : '';
+    const removeBtn = document.getElementById('removeFotoBtn');
+    const cropModalEl = document.getElementById('cropModal');
+    const cropImage = document.getElementById('cropImage');
+    const confirmCropBtn = document.getElementById('confirmCrop');
+    const cancelCropBtn = document.getElementById('cancelCrop');
+    let cropper = null;
+    let currentFile = null;
+    let modalInstance = null;
+    let cropConfirmed = false;
+    let previewObjectURL = null;
+    const initialPreviewSrc = preview ? preview.src : '';
+
+    if (fileInput) {
+        fileInput.classList.add('d-none');
+        fileInput.setAttribute('accept', 'image/*');
+    }
+    if (clearCheckbox) {
+        clearCheckbox.classList.add('d-none');
+    }
+    if (clearLabel) {
+        clearLabel.classList.add('d-none');
+    }
+
+    function clearFileInput() {
+        if (fileInput) {
+            fileInput.value = '';
+        }
+    }
+
+    function setPreviewToPlaceholder() {
+        if (preview) {
+            preview.src = placeholder || initialPreviewSrc;
+        }
+        if (previewObjectURL) {
+            URL.revokeObjectURL(previewObjectURL);
+            previewObjectURL = null;
+        }
+        currentFile = null;
+    }
+
+    function setPreviewFromObjectURL(url) {
+        if (previewObjectURL) {
+            URL.revokeObjectURL(previewObjectURL);
+        }
+        previewObjectURL = url;
+        if (preview) {
+            preview.src = url;
+        }
+    }
+
+    if (cropModalEl) {
+        modalInstance = new bootstrap.Modal(cropModalEl, { backdrop: 'static', keyboard: false });
+        cropModalEl.addEventListener('shown.bs.modal', function () {
+            if (cropper) {
+                cropper.destroy();
+            }
+            cropper = new Cropper(cropImage, {
+                aspectRatio: 1,
+                viewMode: 1,
+                autoCropArea: 0.8,
+                responsive: true,
+                background: false,
+                zoomable: true,
+                scalable: false,
+                movable: true,
+                zoomOnWheel: false,
+                dragMode: 'move',
+            });
+        });
+        cropModalEl.addEventListener('hidden.bs.modal', function () {
+            if (cropper) {
+                cropper.destroy();
+                cropper = null;
+            }
+            cropImage.src = '';
+            if (!cropConfirmed && fileInput) {
+                fileInput.value = '';
+            }
+        });
+    }
+
+    if (removeBtn) {
+        removeBtn.addEventListener('click', function () {
+            setPreviewToPlaceholder();
+            clearFileInput();
+            if (clearCheckbox) {
+                clearCheckbox.checked = true;
+            }
+            cropConfirmed = false;
+        });
+    }
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function (event) {
+            const [file] = event.target.files || [];
+            if (!file) {
+                return;
+            }
+            if (!file.type.startsWith('image/')) {
+                clearFileInput();
+                currentFile = null;
+                return;
+            }
+            currentFile = file;
+            cropConfirmed = false;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                cropImage.src = e.target.result;
+                if (modalInstance) {
+                    modalInstance.show();
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    if (confirmCropBtn) {
+        confirmCropBtn.addEventListener('click', function () {
+            if (!cropper || !fileInput) {
+                return;
+            }
+            const canvas = cropper.getCroppedCanvas({ width: 400, height: 400, imageSmoothingQuality: 'high' });
+            if (!canvas) {
+                return;
+            }
+            canvas.toBlob(function (blob) {
+                if (!blob) {
+                    return;
+                }
+                const fileName = currentFile ? currentFile.name : 'perfil.jpg';
+                const croppedFile = new File([blob], fileName, { type: blob.type });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(croppedFile);
+                fileInput.files = dataTransfer.files;
+                const objectURL = URL.createObjectURL(croppedFile);
+                setPreviewFromObjectURL(objectURL);
+                if (clearCheckbox) {
+                    clearCheckbox.checked = false;
+                }
+                cropConfirmed = true;
+                if (modalInstance) {
+                    modalInstance.hide();
+                }
+            }, currentFile && currentFile.type ? currentFile.type : 'image/png');
+        });
+    }
+
+    if (cancelCropBtn) {
+        cancelCropBtn.addEventListener('click', function () {
+            cropConfirmed = false;
+        });
+    }
+});
+</script>
+{% endblock scripts %}

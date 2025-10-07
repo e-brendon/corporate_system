@@ -1,9 +1,9 @@
-# WebCorp
+# Corporate System
 
 **Estrutura tem que ficar assim:**
 
 ```python
-WebCorp/
+CorporateSystem/
 ├── apps/
 │   ├── **base**/
 │   │   ├── migrations/

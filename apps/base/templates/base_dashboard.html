@@ -24,9 +24,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg bg-secondary fixed-top" style="height: 70px">
         <div class="container-fluid"> 
-            <a class="navbar-brand ps-3" href="/">
-                <img src="{% static 'images/d-logo.png' %}" width="130" alt="" loading="lazy"/>
-            </a>
+            <a class="navbar-brand ps-3 logo-brand" href="/">Logo</a>
             <a class="navbar-toggler border-0" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
                 <i class="link-light fas fa-align-left fa-2x me-3"></i> 
             </a>
@@ -42,26 +40,25 @@
     <!-- Sidebar -->
     <div class="dashboard-wrapper">
         <div id="sidebarMenu" class="sidebar collapse d-lg-flex">
-            <div class="sidebar-brand">
-                <a class="sidebar-logo" href="/">Logo</a>
-            </div>
+            {% with current_url=request.resolver_match.url_name %}
             <div class="sidebar-menu">
-                <button type="button" class="btn btn-warning active" aria-current="true" onclick="location.href='{% url 'home' %}'">
+                <a class="btn sidebar-link {% if current_url == 'home' %}btn-warning active{% else %}btn-light{% endif %}" aria-current="true" href="{% url 'home' %}">
                     <i class="fas fa-arrow-left me-2"></i>Site
-                </button>
-                <button type="button" class="btn btn-light" aria-current="true">
+                </a>
+                <a class="btn sidebar-link {% if current_url != 'home' %}btn-warning active{% else %}btn-light{% endif %}" href="#">
                     <i class="fas fa-tachometer-alt me-2"></i>Painel
-                </button>
-                <button type="button" class="btn btn-light">
+                </a>
+                <a class="btn sidebar-link btn-light" href="#">
                     <i class="fas fa-file-alt me-2"></i>Relatórios
-                </button>
-                <button type="button" class="btn btn-light">
+                </a>
+                <a class="btn sidebar-link btn-light" href="#">
                     <i class="fas fa-users me-2"></i>Usuários do Sistema
-                </button>
-                <button type="button" class="btn btn-light">
+                </a>
+                <a class="btn sidebar-link btn-light" href="#">
                     <i class="fas fa-cog me-2"></i>Configurações
-                </button>
+                </a>
             </div>
+            {% endwith %}
         </div>
 
         <!-- Container -->

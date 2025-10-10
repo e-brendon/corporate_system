@@ -1,0 +1,225 @@
+@import url('global.css');
+
+.navbar.bg-secondary {
+    background: linear-gradient(90deg, #4f5663 0%, #707888 100%);
+    border-bottom: none;
+}
+
+.dashboard-wrapper {
+    display: flex;
+    min-height: calc(100vh - 70px);
+    background: linear-gradient(180deg, #f6f8fd 0%, #ffffff 75%);
+}
+
+.sidebar {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    width: 260px;
+    height: calc(100% - 70px);
+    background: #5b6270;
+    padding: 32px 24px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+    box-shadow: 12px 0 36px rgba(24, 30, 44, 0.16);
+    overflow-y: auto;
+    z-index: 1020;
+}
+
+.sidebar.collapse:not(.show) {
+    display: none;
+}
+
+@media (min-width: 992px) {
+    .sidebar {
+        display: flex !important;
+    }
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 22px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.sidebar-logo img {
+    max-width: 130px;
+    display: block;
+    filter: brightness(1.05);
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.sidebar .btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    height: 58px;
+    border: none;
+    border-radius: 16px;
+    font-weight: 600;
+    transition: background 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 18px 32px rgba(19, 24, 33, 0.12);
+}
+
+.sidebar .btn i {
+    font-size: 1.15rem;
+}
+
+.sidebar .btn-light {
+    background: #ffffff;
+    color: #4f5663;
+}
+
+.sidebar .btn-light:hover {
+    background: #f1f3f8;
+    transform: translateY(-2px);
+    box-shadow: 0 14px 26px rgba(19, 24, 33, 0.16);
+}
+
+.sidebar .btn-warning {
+    background: #ffc857;
+    color: #2f2f2f;
+    box-shadow: 0 16px 30px rgba(255, 200, 87, 0.45);
+}
+
+.sidebar .btn-warning:hover {
+    background: #f9b938;
+}
+
+.dashboard-main {
+    margin-top: 70px;
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    min-height: calc(100vh - 70px);
+    padding: 70px 90px 120px;
+    position: relative;
+}
+
+.bloco {
+    width: 100%;
+}
+
+.pagination .page-link {
+    background: var(--main-color-default);
+    color: var(--main-color);
+    border: none;
+}
+
+.page-card-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.dashboard-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 48px 56px;
+    box-shadow: 0 30px 46px rgba(45, 55, 75, 0.14);
+}
+
+.dashboard-card h3 {
+    color: #505969;
+    font-weight: 600;
+}
+
+.dashboard-card .form-label {
+    color: #505969;
+    font-weight: 500;
+}
+
+.dashboard-card .form-control {
+    border-radius: 12px;
+    border: 1px solid #d6dbe7;
+    padding: 11px 14px;
+    background: #fbfcff;
+}
+
+.dashboard-card .form-control:focus {
+    border-color: #8d9abc;
+    box-shadow: 0 0 0 0.2rem rgba(141, 154, 188, 0.25);
+}
+
+.dashboard-card .btn-secondary {
+    background: #5b6270;
+    border: none;
+    padding: 12px 36px;
+    font-weight: 600;
+    border-radius: 12px;
+}
+
+.dashboard-card .btn-secondary:hover {
+    background: #444b58;
+}
+
+@media (max-width: 1199px) {
+    .dashboard-main {
+        padding: 70px 40px 100px;
+    }
+}
+
+@media (max-width: 991px) {
+    .dashboard-wrapper {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+        padding: 24px 20px 32px;
+    }
+
+    .sidebar-menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .sidebar .btn {
+        flex: 1 1 46%;
+        min-width: 180px;
+        box-shadow: none;
+    }
+
+    .dashboard-main {
+        margin-left: 0;
+        width: 100%;
+        padding: 110px 24px 90px;
+    }
+
+    .navbar-brand {
+        display: none;
+    }
+
+    footer {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .sidebar .btn {
+        flex: 1 1 100%;
+    }
+
+    .dashboard-card {
+        padding: 32px 24px;
+    }
+
+    .page-card-wrapper {
+        padding: 24px 12px;
+    }
+}

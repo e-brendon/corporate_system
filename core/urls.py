@@ -42,6 +42,7 @@ urlpatterns = [
     path('base/', base_view, name='base'),
     path('contas/', include('contas.urls')),
     path('perfil/', include('perfil.urls')),
+    path('config/', include('config.urls')), # url do app config
     path('', include('pages.urls')), # url do app 
 ]
 

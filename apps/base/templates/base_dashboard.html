@@ -45,8 +45,9 @@
                 <a class="btn sidebar-link {% if current_url == 'home' %}btn-warning active{% else %}btn-light{% endif %}" aria-current="true" href="{% url 'home' %}">
                     <i class="fas fa-arrow-left me-2"></i>Site
                 </a>
-                <a class="btn sidebar-link {% if current_url != 'home' %}btn-warning active{% else %}btn-light{% endif %}" href="#">
-                    <i class="fas fa-tachometer-alt me-2"></i>Painel
+                <button type="button" class="btn btn-light" aria-current="true" 
+                    onclick="location.href='{% url 'painel' %}'"><i class="fas fa-tachometer-alt me-2"></i>Painel</button><button 
+                    type="button" class="btn btn-light"><i class="fas fa-file-alt me-2"></i>Relatórios</button>
                 </a>
                 <a class="btn sidebar-link btn-light" href="#">
                     <i class="fas fa-file-alt me-2"></i>Relatórios

@@ -28,11 +28,7 @@
 				<tr>
                     <td scope="row">{{ usuario.id }}</td>
                     <td>
-                        {% if usuario.perfil.foto %}
-                        <img src="{{ usuario.perfil.foto.url }}" class="img-thumbnail rounded user-avatar-thumb" alt="Foto de perfil">  
-                        {% else %}
-                        <img src="{% static 'images/perfil/foto-padrao.jpg' %}" class="img-thumbnail rounded user-avatar-thumb" alt="Foto padrão">
-                        {% endif %}
+                        <img src="{{ usuario.perfil.foto_url }}" class="img-thumbnail rounded user-avatar-thumb" alt="Foto de perfil">
                     </td>
 					<td>{{ usuario.first_name }} {{ usuario.last_name }}</td>
 					<td>{{ usuario.email }}</td>

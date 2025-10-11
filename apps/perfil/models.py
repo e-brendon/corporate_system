@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.core.files.storage import default_storage
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -27,7 +28,15 @@ class Perfil(models.Model):
                 return self.foto.url
             except ValueError:
                 pass
-        return f'{settings.MEDIA_URL}perfil/foto/padrao/perfil.jpg'
+        default_candidates = [
+            'perfil/padrao/perfil.jpg',
+            'perfil/foto/padrao/perfil.jpg',
+        ]
+        for relative_path in default_candidates:
+            if default_storage.exists(relative_path):
+                return f'{settings.MEDIA_URL}{relative_path}'
+        # Fallback to the first candidate even if it doesn't exist to avoid breaking image tags.
+        return f'{settings.MEDIA_URL}{default_candidates[0]}'
 
 #@receiver(post_save, sender=settings.AUTH_USER_MODEL)
 #def create_perfil(sender, **kwargs):

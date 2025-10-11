@@ -26,6 +26,13 @@ class PerfilForm(forms.ModelForm):
                 classes = field.widget.attrs.get('class', '')
                 field.widget.attrs['class'] = f'{classes} form-control'.strip()
         self.fields['foto'].widget.attrs['accept'] = 'image/*'
+        descricao_field = self.fields.get('descricao')
+        if descricao_field:
+            classes = descricao_field.widget.attrs.get('class', '')
+            descricao_field.widget.attrs['class'] = f'{classes} auto-resize-textarea'.strip()
+            descricao_field.widget.attrs['rows'] = 1
+            descricao_field.widget.attrs['data-autoresize'] = 'true'
+            descricao_field.widget.attrs['data-min-height'] = '2.5rem'
 
     def save(self, commit=True):
         perfil = super().save(commit=False)

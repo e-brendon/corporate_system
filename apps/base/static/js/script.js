@@ -2,6 +2,7 @@
     const storageKey = 'theme-preference';
     const root = document.documentElement;
     const mediaQuery = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
+    const autoResizeSelector = 'textarea[data-autoresize]';
 
     const resolveTheme = (mode) => {
         if (mode === 'dark' || mode === 'light') {
@@ -46,6 +47,44 @@
         applyTheme(mode, true);
     };
 
+    const getMinHeight = (textarea) => {
+        const datasetValue = textarea.dataset.minHeight;
+        if (datasetValue) {
+            if (datasetValue.endsWith('rem')) {
+                const remValue = parseFloat(datasetValue);
+                if (!Number.isNaN(remValue)) {
+                    return remValue * parseFloat(getComputedStyle(document.documentElement).fontSize || 16);
+                }
+            }
+            if (datasetValue.endsWith('px')) {
+                const pxValue = parseFloat(datasetValue);
+                if (!Number.isNaN(pxValue)) {
+                    return pxValue;
+                }
+            }
+        }
+        const styleValue = parseFloat(getComputedStyle(textarea).getPropertyValue('min-height'));
+        return Number.isNaN(styleValue) ? 0 : styleValue;
+    };
+
+    const initAutoResize = () => {
+        const textareas = document.querySelectorAll(autoResizeSelector);
+        if (!textareas.length) {
+            return;
+        }
+        textareas.forEach((textarea) => {
+            const minHeight = getMinHeight(textarea);
+            const resize = () => {
+                textarea.style.height = 'auto';
+                const newHeight = Math.max(textarea.scrollHeight, minHeight);
+                textarea.style.height = `${newHeight}px`;
+            };
+            textarea.addEventListener('input', resize);
+            // Adjust height on initialization (handles pre-filled values).
+            resize();
+        });
+    };
+
     const init = () => {
         const storedMode = (() => {
             try {
@@ -76,6 +115,8 @@
                 mediaQuery.addListener(listener);
             }
         }
+
+        initAutoResize();
     };
 
     if (document.readyState === 'loading') {

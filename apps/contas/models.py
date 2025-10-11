@@ -23,6 +23,7 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    force_change_password = models.BooleanField(default=False)
     date_joined = models.DateTimeField('date joined', auto_now_add=True)
     
     USERNAME_FIELD = 'email'
@@ -60,3 +61,11 @@ class MyUser(AbstractBaseUser, PermissionsMixin):
 
         self.username = candidate
         super(MyUser, self).save(*args, **kwargs)
+
+    @property
+    def force_chance_password(self):
+        return self.force_change_password
+
+    @force_chance_password.setter
+    def force_chance_password(self, value):
+        self.force_change_password = value

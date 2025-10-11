@@ -8,7 +8,7 @@
         <ul>
             <li><a href="{% url 'password_change' %}">Alterar minha senha</a></li>
             
-            {% if perms.contas.view_myuser %}
+            {% if can_manage_users %}
             <li><a href="{% url 'lista_usuarios' %}">Lista de usuários</a></li>
             {% endif %}
 

@@ -1,11 +1,14 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required 
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.mail import send_mail
+from django.contrib.auth.views import PasswordChangeView
+from django.contrib.messages.views import SuccessMessageMixin
+from django.urls import reverse_lazy
 from contas.models import MyUser
-from perfil.forms import PerfilForm
 from contas.forms import CustomUserCreationForm, UserChangeForm
 from contas.permissions import grupo_colaborador_required
 from perfil.models import Perfil
@@ -29,6 +32,9 @@ def login_view(request):
         user = authenticate(request, email=email, password=password) # Retorna a autenticação
         if user is not None: # se user não for none ou underfine 
             login(request, user) # faz login no sistema
+            if getattr(user, 'force_change_password', False):
+                messages.warning(request, 'Você precisa alterar a senha temporária antes de continuar.')
+                return redirect('password_change')
             return redirect('home') # Volta para rota home 
         else:
             messages.error(request, 'Email ou senha inválidos') # senão, retorna mensagem de erro
@@ -121,24 +127,73 @@ def lista_usuarios(request):
 @login_required
 @grupo_colaborador_required(['administrador','colaborador'])
 def adicionar_usuario(request):
-    user_form = CustomUserCreationForm()
+    user_form = CustomUserCreationForm(auto_generate_password=True)
     perfil_form = PerfilForm()
 
     if request.method == 'POST':
-        user_form = CustomUserCreationForm(request.POST)
+        user_form = CustomUserCreationForm(request.POST, auto_generate_password=True)
         perfil_form = PerfilForm(request.POST, request.FILES)
 
         if user_form.is_valid() and perfil_form.is_valid():
             # Salve o usuário
             usuario = user_form.save()
+            senha_temporaria = user_form.generated_password
 
             # Crie um novo perfil para o usuário
             perfil = perfil_form.save(commit=False)
             perfil.usuario = usuario
             perfil.save()
 
+            if senha_temporaria:
+                email_enviado = _enviar_email_senha_temporaria(usuario, senha_temporaria)
+                if not email_enviado:
+                    messages.warning(request, 'Usuário criado, mas não foi possível enviar o e-mail com a senha temporária.')
+            else:
+                messages.warning(request, 'Usuário criado, mas ocorreu um erro ao gerar a senha temporária.')
+
             messages.success(request, 'Usuário adicionado com sucesso.')
             return redirect('lista_usuarios')
 
     context = {'user_form': user_form, 'perfil_form': perfil_form}
     return render(request, "adicionar-usuario.html", context)
+
+
+def _enviar_email_senha_temporaria(usuario, senha_temporaria):
+    assunto = 'Bem-vindo ao sistema'
+    mensagem = (
+        f'Olá {usuario.first_name},\n\n'
+        'Um perfil foi criado para você em nosso sistema.\n'
+        f'Senha temporária: {senha_temporaria}\n\n'
+        'Use esta senha para fazer o primeiro login e, em seguida, altere-a conforme solicitado.\n\n'
+        'Atenciosamente,\n'
+        'Equipe'
+    )
+    try:
+        send_mail(
+            assunto,
+            mensagem,
+            settings.DEFAULT_FROM_EMAIL,
+            [usuario.email],
+            fail_silently=False,
+        )
+        return True
+    except Exception:
+        return False
+
+
+class CustomPasswordChangeView(SuccessMessageMixin, PasswordChangeView):
+    """
+    Após a troca de senha, remove o flag de obrigatoriedade para o próximo login.
+    """
+    success_url = reverse_lazy('password_change_done')
+    success_message = 'Senha alterada com sucesso.'
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user = self.request.user
+        if hasattr(user, 'force_change_password'):
+            user.force_change_password = False
+            user.save(update_fields=['force_change_password'])
+        if hasattr(user, 'force_chance_password'):
+            setattr(user, 'force_chance_password', False)
+        return response

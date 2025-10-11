@@ -197,6 +197,12 @@ html[data-theme="dark"] .theme-toggle-btn.is-active {
     color: var(--bs-navbar-hover-color);
 }
 
+.auto-resize-textarea {
+    min-height: 2.5rem;
+    resize: none;
+    overflow: hidden;
+}
+
 .app-navbar .nav-profile-link i {
     color: inherit;
 }

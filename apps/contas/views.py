@@ -13,8 +13,7 @@ from perfil.forms import PerfilForm
 # Timeout (1hora)
 def timeout_view(request):
     return render(request, 'timeout.html')
- 
- 
+
 # Logout (Sair do sistema)
 def logout_view(request):
     logout(request)
@@ -109,3 +108,9 @@ def atualizar_usuario(request, username):
         'foto_placeholder': f'{settings.MEDIA_URL}perfil/foto-padrao.png',
     }
     return render(request, 'user_update.html', context)
+
+@login_required()
+@grupo_colaborador_required(['administrador','colaborador'])
+def lista_usuarios(request):
+    lista_usuarios = MyUser.objects.select_related('perfil').filter(is_superuser=False).order_by('first_name')
+    return render(request, 'lista-usuarios.html', {'lista_usuarios': lista_usuarios})

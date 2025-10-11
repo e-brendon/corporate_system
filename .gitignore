@@ -7,6 +7,8 @@ __pycache__/
 *.so
 password.txt
 media/perfil/foto/em_brancoStory1.png
+media/perfil/foto/portrait-5378357_1280_gzoZwNS.jpg
+media/perfil/foto/portrait-5378357_1280.jpg
 # Distribution / packaging
 .Python
 build/

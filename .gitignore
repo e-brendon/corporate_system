@@ -6,6 +6,7 @@ __pycache__/
 # C extensions
 *.so
 password.txt
+media/perfil/foto/em_brancoStory1.png
 # Distribution / packaging
 .Python
 build/

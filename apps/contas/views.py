@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group 
 from django.shortcuts import render, redirect, get_object_or_404
 from contas.models import MyUser
+from perfil.forms import PerfilForm
 from contas.forms import CustomUserCreationForm, UserChangeForm
 from contas.permissions import grupo_colaborador_required
 from perfil.models import Perfil
@@ -109,8 +110,35 @@ def atualizar_usuario(request, username):
     }
     return render(request, 'user_update.html', context)
 
+#Listar todos os usuarios (somente admin e colaborador)
 @login_required()
 @grupo_colaborador_required(['administrador','colaborador'])
 def lista_usuarios(request):
     lista_usuarios = MyUser.objects.select_related('perfil').filter(is_superuser=False).order_by('first_name')
     return render(request, 'lista-usuarios.html', {'lista_usuarios': lista_usuarios})
+
+#Adicionar um novo usuario
+@login_required
+@grupo_colaborador_required(['administrador','colaborador'])
+def adicionar_usuario(request):
+    user_form = CustomUserCreationForm()
+    perfil_form = PerfilForm()
+
+    if request.method == 'POST':
+        user_form = CustomUserCreationForm(request.POST)
+        perfil_form = PerfilForm(request.POST, request.FILES)
+
+        if user_form.is_valid() and perfil_form.is_valid():
+            # Salve o usuário
+            usuario = user_form.save()
+
+            # Crie um novo perfil para o usuário
+            perfil = perfil_form.save(commit=False)
+            perfil.usuario = usuario
+            perfil.save()
+
+            messages.success(request, 'Usuário adicionado com sucesso.')
+            return redirect('lista_usuarios')
+
+    context = {'user_form': user_form, 'perfil_form': perfil_form}
+    return render(request, "adicionar-usuario.html", context)

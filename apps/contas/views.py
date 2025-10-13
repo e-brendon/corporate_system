@@ -127,11 +127,11 @@ def lista_usuarios(request):
 @login_required
 @grupo_colaborador_required(['administrador','colaborador'])
 def adicionar_usuario(request):
-    user_form = CustomUserCreationForm(auto_generate_password=True)
+    user_form = CustomUserCreationForm(auto_generate_password=True, allow_group_selection=True)
     perfil_form = PerfilForm()
 
     if request.method == 'POST':
-        user_form = CustomUserCreationForm(request.POST, auto_generate_password=True)
+        user_form = CustomUserCreationForm(request.POST, auto_generate_password=True, allow_group_selection=True)
         perfil_form = PerfilForm(request.POST, request.FILES)
 
         if user_form.is_valid() and perfil_form.is_valid():

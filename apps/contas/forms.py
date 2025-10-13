@@ -3,6 +3,7 @@ import string
 import secrets
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import Group
 from contas.models import MyUser 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -21,16 +22,27 @@ class CustomUserCreationForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         self.auto_generate_password = kwargs.pop('auto_generate_password', False)
+        self.allow_group_selection = kwargs.pop('allow_group_selection', False)
+        self.group_queryset = kwargs.pop('group_queryset', Group.objects.all())
         self.generated_password = None
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
         if self.auto_generate_password:
             self.fields.pop('password1')
             self.fields.pop('password2')
+        if self.allow_group_selection:
+            self.fields['group'] = forms.ModelChoiceField(
+                queryset=self.group_queryset,
+                label='Grupo',
+                required=True,
+                empty_label='Selecione um grupo'
+            )
         for field_name, field in self.fields.items():
             if field.widget.__class__ in [forms.CheckboxInput, forms.RadioSelect]:
                 field.widget.attrs['class'] = 'form-check-input'
             else:
                 field.widget.attrs['class'] = 'form-control'
+        if 'group' in self.fields and isinstance(self.fields['group'].widget, forms.Select):
+            self.fields['group'].widget.attrs['class'] = 'form-select'
 
     def clean_password2(self):
         if self.auto_generate_password:
@@ -58,6 +70,11 @@ class CustomUserCreationForm(UserCreationForm):
 
         if commit:
             user.save()
+            self.save_m2m()
+            if self.allow_group_selection:
+                group = self.cleaned_data.get('group')
+                if group:
+                    user.groups.set([group])
         return user
 
     def _mark_user_for_password_change(self, user):
@@ -93,12 +110,38 @@ class UserChangeForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None) # get the 'user' from kwargs dictionary
+        self.group_queryset = kwargs.pop('group_queryset', Group.objects.all())
         super().__init__(*args, **kwargs)
-        if not self.user.groups.filter(name__in=['administrador','colaborador']).exists():
-            for group in ['is_active']: 
-                del self.fields[group]
+        can_manage_groups = self.user and self.user.groups.filter(name__in=['administrador','colaborador']).exists()
+        if can_manage_groups:
+            current_group = None
+            if self.instance and self.instance.pk:
+                current_group = self.instance.groups.first()
+            self.fields['group'] = forms.ModelChoiceField(
+                queryset=self.group_queryset,
+                label='Grupo',
+                required=True,
+                initial=current_group,
+                empty_label=None,
+            )
+        else:
+            for field_name in ['is_active']:
+                if field_name in self.fields:
+                    del self.fields[field_name]
         for field_name, field in self.fields.items():
             if field.widget.__class__ in [forms.CheckboxInput, forms.RadioSelect]:
                 field.widget.attrs['class'] = 'form-check-input'
             else:
                 field.widget.attrs['class'] = 'form-control'
+        if 'group' in self.fields and isinstance(self.fields['group'].widget, forms.Select):
+            self.fields['group'].widget.attrs['class'] = 'form-select'
+
+    def save(self, commit=True):
+        user = super().save(commit=commit)
+        if 'group' in self.cleaned_data and commit:
+            group = self.cleaned_data.get('group')
+            if group:
+                user.groups.set([group])
+            else:
+                user.groups.clear()
+        return user

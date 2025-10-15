@@ -49,6 +49,12 @@ class CustomUserCreationForm(UserCreationForm):
             return None
         return super(CustomUserCreationForm, self).clean_password2()
 
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if email and MyUser.objects.filter(email=email).exists():
+            raise forms.ValidationError('Este e-mail já está cadastrado.')
+        return email
+
     def save(self, commit=True):
         password = None
         if self.auto_generate_password:

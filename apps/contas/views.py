@@ -153,6 +153,13 @@ def adicionar_usuario(request):
 
             messages.success(request, 'Usuário adicionado com sucesso.')
             return redirect('lista_usuarios')
+        else:
+            email_errors = user_form.errors.get('email')
+            if email_errors:
+                # Banner vermelho informando e-mail duplicado
+                messages.error(request, email_errors[0])
+            elif user_form.errors or perfil_form.errors:
+                messages.error(request, 'Não foi possível adicionar o usuário. Verifique os campos informados.')
 
     context = {'user_form': user_form, 'perfil_form': perfil_form}
     return render(request, "adicionar-usuario.html", context)

@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.mail import send_mail
-from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.views import PasswordChangeView, PasswordResetConfirmView
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from contas.models import MyUser
@@ -184,7 +184,7 @@ def _enviar_email_senha_temporaria(usuario, senha_temporaria):
         f'Senha temporária: {senha_temporaria}\n\n'
         'Use esta senha para fazer o primeiro login e, em seguida, altere-a conforme solicitado.\n\n'
         'Atenciosamente,\n'
-        'Equipe'
+        'Brendon'
     )
     try:
         send_mail(
@@ -214,4 +214,40 @@ class CustomPasswordChangeView(SuccessMessageMixin, PasswordChangeView):
             user.save(update_fields=['force_change_password'])
         if hasattr(user, 'force_chance_password'):
             setattr(user, 'force_chance_password', False)
+        _enviar_email_alteracao_senha(user)
         return response
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    success_url = reverse_lazy('password_reset_complete')
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        user = form.user
+        _enviar_email_alteracao_senha(user)
+        return response
+
+
+def _enviar_email_alteracao_senha(usuario):
+    """Notifica o usuário por e-mail quando a senha é alterada."""
+    if not usuario or not getattr(usuario, 'email', None):
+        return
+    assunto = 'Sua senha foi alterada'
+    mensagem = (
+        f'Olá {usuario.get_full_name() or usuario.username},\n\n'
+        'Este é um aviso automático informando que a senha da sua conta foi alterada.\n'
+        'Se você não realizou esta alteração, redefina sua senha imediatamente ou entre em contato com o suporte.\n\n'
+        'Atenciosamente,\n'
+        'Brendon'
+    )
+    try:
+        send_mail(
+            assunto,
+            mensagem,
+            settings.DEFAULT_FROM_EMAIL,
+            [usuario.email],
+            fail_silently=True,
+        )
+    except Exception:
+        # Evita interromper o fluxo caso o envio falhe.
+        pass

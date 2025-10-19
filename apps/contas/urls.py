@@ -3,6 +3,7 @@ from contas import views
 
 urlpatterns = [
     path('password_change/', views.CustomPasswordChangeView.as_view(), name='password_change'),
+    path('reset/<uidb64>/<token>/', views.CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path("", include("django.contrib.auth.urls")),  # Django auth
 	#path('desconectado-inatividade/',  views.timeout_view, name='timeout'),
     path('timeout/', views.timeout_view, name='timeout'), 

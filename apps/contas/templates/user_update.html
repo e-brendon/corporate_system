@@ -1,6 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'base_dashboard.html' %}
 {% block title %}Alterar Usuário{% endblock %}
 {% block head_extra %}
+
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.5.13/dist/cropper.min.css">
 <style>
     #fotoPreview {
@@ -13,9 +15,9 @@
     }
 </style>
 {% endblock head_extra %}
-{% block content %}
-<div class="surface-card">
-    <h3>Atualizar Usuário</h3>
+{% block content_dash %}
+<div class="surface-card p-4">
+    <h3 class="mb-4">Atualizar Usuário</h3>
     <form method="post" enctype="multipart/form-data" class="row g-3">
         {% csrf_token %}
         <div class="col-12 col-lg-6">

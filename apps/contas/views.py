@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group 
+from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.mail import send_mail
 from django.contrib.auth.views import PasswordChangeView
@@ -121,8 +122,17 @@ def atualizar_usuario(request, username):
 @login_required()
 @grupo_colaborador_required(['administrador','colaborador'])
 def lista_usuarios(request):
-    lista_usuarios = MyUser.objects.select_related('perfil').filter(is_superuser=False).order_by('first_name')
-    return render(request, 'lista-usuarios.html', {'lista_usuarios': lista_usuarios})
+    query = request.GET.get('q', '').strip()
+    lista_usuarios = MyUser.objects.select_related('perfil').prefetch_related('groups').filter(is_superuser=False)
+    if query:
+        lista_usuarios = lista_usuarios.filter(
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query) |
+            Q(email__icontains=query) |
+            Q(username__icontains=query)
+        )
+    lista_usuarios = lista_usuarios.order_by('first_name', 'last_name')
+    return render(request, 'lista-usuarios.html', {'lista_usuarios': lista_usuarios, 'query': query})
 
 #Adicionar um novo usuario
 @login_required

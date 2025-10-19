@@ -6,8 +6,8 @@
         <h4>Contas</h4>
         <p>Configurações do aplicativo contas</p>
         <ul>
+            <li><a href="{% url 'atualizar_meu_usuario' %}">Atualizar meu usuário</a></li>
             <li><a href="{% url 'password_change' %}">Alterar minha senha</a></li>
-            
             {% if can_manage_users %}
             <li><a href="{% url 'lista_usuarios' %}">Lista de usuários</a></li>
             {% endif %}

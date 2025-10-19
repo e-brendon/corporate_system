@@ -13,6 +13,7 @@ from contas.forms import CustomUserCreationForm, UserChangeForm
 from contas.permissions import grupo_colaborador_required
 from perfil.models import Perfil
 from perfil.forms import PerfilForm
+from base.utils import add_form_errors_to_messages
 
 # Timeout (1hora)
 def timeout_view(request):
@@ -62,8 +63,8 @@ def register_view(request):
             return redirect('login') # Redireciona para login
         else:
             # Tratar quando usuario já existe, senhas... etc...
-            messages.error(request, 'A senha deve ter pelo menos 1 caractere maiúsculo, \
-                1 caractere especial e no minimo 8 caracteres.')
+            add_form_errors_to_messages(request, form)
+            
     form = CustomUserCreationForm() # Inicialmente carrega o formulário no template, os campos etc..
     return render(request, "register.html",{"form": form})
 

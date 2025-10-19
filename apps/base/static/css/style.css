@@ -203,6 +203,15 @@ html[data-theme="dark"] .theme-toggle-btn.is-active {
     overflow: hidden;
 }
 
+.auth-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: transparent;
+    z-index: 10;
+}
+
 .app-navbar .nav-profile-link i {
     color: inherit;
 }

@@ -11,5 +11,9 @@ def context_social(request):
     return {
         'social': 'Exibir este contexto em qualquer lugar!',
         'can_manage_users': can_manage_users,
-        'app_name': os.getenv('APP_NAME', 'e-brendon'),
+        'app_name': os.getenv('APP_NAME', 'x'),
+        'author': os.getenv('AUTHOR', 'x'),
+        'release': os.getenv('RELEASE', 'x'),
+        'patch': os.getenv('PATCH', 'x'),
+        'core': os.getenv('CORE', 'x'),
     }

@@ -83,6 +83,7 @@ PROJECT_APPS = [ # são os apps que criamos no projeto
     'apps.base',
     'apps.config',
     'apps.pages',
+    'apps.forum',
     'apps.perfil',
 ]
 

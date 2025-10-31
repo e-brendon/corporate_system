@@ -50,6 +50,10 @@
     --navbar-toggler-icon-filter: none;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
 html[data-theme="light"] {
     --color-body-bg: #f6f8fd;
     --color-body-text: #2f3542;
@@ -140,10 +144,13 @@ body {
 	font-family: 'Roboto', sans-serif;
     background: var(--color-body-bg);
     color: var(--color-body-text);
+    -webkit-font-smoothing: antialiased;
+    -webkit-transition: background-color 0.3s ease, color 0.3s ease;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 a {
 	text-decoration: none;
 	color: var(--color-disable);
+    -webkit-tap-highlight-color: transparent;
 }

@@ -21,4 +21,4 @@ class PostagemForum(models.Model):
     class Meta:
         verbose_name = 'Postagem Forum'
         verbose_name_plural = 'Postagem Forum'
-        ordering = ['-data_criacao']
+        ordering = ['data_criacao']

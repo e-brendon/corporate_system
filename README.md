@@ -1,9 +1,9 @@
-# Corporate System
+# System Forum
 
-**Estrutura atual do projeto:**
+**Estrutura atual do projeto atual:**
 
 ```python
-CorporateSystem/
+System_forum/
 ├── LICENSE
 ├── README.md
 ├── apps/

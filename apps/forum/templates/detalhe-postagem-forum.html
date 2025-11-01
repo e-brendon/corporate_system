@@ -11,7 +11,7 @@
                         {% if request.user.is_superuser or request.user == postagem.usuario %}
                         <a class="btn btn-warning" href="{% url 'editar-postagem-forum' postagem.id %}"><i class="fas fa-edit"></i></a>
                         {% endif %}
-                        <a class="btn btn-danger" href="#"><i class="fas fa-trash"></i></a>
+                        <a class="btn btn-danger" data-bs-toggle="modal" href="#confirmarExclusaoModal{{postagem.id}}" role="button"><i class="fas fa-trash"></i></a>
                     </div> 
                 </div> 
                 <span>Autor: {{postagem.usuario.first_name}}</span>
@@ -26,4 +26,5 @@
         </div>
     </div>
 </div>
+{% include "modal-deletar-postagem-forum.html" %}
 {% endblock %}

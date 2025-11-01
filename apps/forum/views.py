@@ -14,6 +14,7 @@ def lista_postagem_forum(request):
     return render(request, 'lista-postagens-forum.html', context)
 
 # Cria postagens 
+@login_required
 def criar_postagem_forum(request):
     form = PostagemForumForm()
     if request.method == 'POST':
@@ -53,3 +54,13 @@ def editar_postagem_forum(request, id):
     else:
         form = PostagemForumForm(instance=postagem)
     return render(request, 'form-postagem-forum.html', {'form': form})
+
+# remover postagem (ID)
+@login_required
+def deletar_postagem_forum(request, id):
+    postagem = get_object_or_404(models.PostagemForum, id=id)
+    if request.method == 'POST':
+        postagem.delete()
+        messages.error(request, 'Sua postagem '+ postagem.titulo +' foi removido com sucesso!')
+        return redirect('lista-postagem-forum')
+    return render(request, 'detalhe-postagem-forum.html', {'postagem': postagem})

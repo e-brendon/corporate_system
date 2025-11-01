@@ -77,18 +77,21 @@
                 <a class="btn sidebar-link {% if current_url == 'home' %}btn-warning active{% else %}btn-light{% endif %}" aria-current="true" href="{% url 'home' %}">
                     <i class="fas fa-arrow-left me-2"></i>Site
                 </a>
-                <a class="btn sidebar-link btn-light" aria-current="true" href="{% url 'painel' %}">
+                <a class="btn sidebar-link {% if current_url == 'painel' %}btn-warning active{% else %}btn-light{% endif %}" aria-current="true" href="{% url 'painel' %}">
                     <i class="fas fa-tachometer-alt me-2"></i>Painel
                 </a>
-                <a class="btn sidebar-link btn-light" href="#">
+                <a class="btn sidebar-link {% if current_url == 'dash-lista-postagem-forum' %}btn-warning active{% else %}btn-light{% endif %}" href="{% url 'dash-lista-postagem-forum' %}">
+                    <i class="fas fa-stream me-2"></i>Postagens
+                </a>
+                <a class="btn sidebar-link {% if current_url == 'relatorio' %}btn-warning active{% else %}btn-light{% endif %}" href="{% url 'relatorio' %}">
                     <i class="fas fa-file-alt me-2"></i>Relatórios
                 </a>
                 {% if can_manage_users %}
-                <a class="btn sidebar-link btn-light" href="{% url 'lista_usuarios' %}">
+                <a class="btn sidebar-link {% if current_url == 'lista_usuarios' %}btn-warning active{% else %}btn-light{% endif %}" href="{% url 'lista_usuarios' %}">
                     <i class="fas fa-users me-2"></i>Usuários
                 </a>
                 {% endif %}
-                <a class="btn sidebar-link btn-light" href="{% url 'configuracao' %}">
+                <a class="btn sidebar-link {% if current_url == 'configuracao' %}btn-warning active{% else %}btn-light{% endif %}" href="{% url 'configuracao' %}">
                     <i class="fas fa-cog me-2"></i>Configurações
                 </a>
             </div>

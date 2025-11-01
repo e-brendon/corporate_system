@@ -1,27 +1,36 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+
 from forum.forms import PostagemForumForm
 from forum import models
 from base.utils import add_form_errors_to_messages
-from django.shortcuts import get_object_or_404
 # Create your views here.
+
+GRUPOS_GESTAO = ('administrador', 'colaborador')
+
+
+def _usuario_gestor(user):
+    return user.is_superuser or user.groups.filter(name__in=GRUPOS_GESTAO).exists()
 
 # Lista de postagens 
 def lista_postagem_forum(request):
-    postagens = models.PostagemForum.objects.filter(ativo=True)
+    postagens = models.PostagemForum.objects.filter(ativo=True).select_related('usuario')
     context = {'postagens': postagens}
     return render(request, 'lista-postagens-forum.html', context)
 
 # Cria postagens 
 @login_required
 def criar_postagem_forum(request):
-    form = PostagemForumForm()
+    form = PostagemForumForm(user=request.user)
     if request.method == 'POST':
-        form = PostagemForumForm(request.POST, request.FILES)
+        form = PostagemForumForm(request.POST, request.FILES, user=request.user)
         if form.is_valid():
             forum = form.save(commit=False)
             forum.usuario = request.user
+            if not _usuario_gestor(request.user):
+                forum.data_publicacao = timezone.localtime().date()
             forum.save()
             form.save_m2m()
             # Redirecionar para uma página de sucesso ou fazer qualquer outra ação desejada
@@ -44,7 +53,7 @@ def editar_postagem_forum(request, id):
         messages.error(request, 'Você não tem permissão para editar esta postagem.')
         return redirect('detalhe-postagem-forum', id=postagem.id)
     if request.method == 'POST':
-        form = PostagemForumForm(request.POST, request.FILES, instance=postagem)
+        form = PostagemForumForm(request.POST, request.FILES, instance=postagem, user=request.user)
         if form.is_valid():
             form.save()
             messages.warning(request, 'Seu Post '+ postagem.titulo +' foi atualizado com sucesso!')
@@ -52,7 +61,7 @@ def editar_postagem_forum(request, id):
         else:
             add_form_errors_to_messages(request, form)
     else:
-        form = PostagemForumForm(instance=postagem)
+        form = PostagemForumForm(instance=postagem, user=request.user)
     return render(request, 'form-postagem-forum.html', {'form': form})
 
 # remover postagem (ID)
@@ -64,21 +73,3 @@ def deletar_postagem_forum(request, id):
         messages.error(request, 'Sua postagem '+ postagem.titulo +' foi removido com sucesso!')
         return redirect('lista-postagem-forum')
     return render(request, 'detalhe-postagem-forum.html', {'postagem': postagem})
-
-# Lista de Postagens no Dashboard (Gerenciar)
-def lista_postagem_forum(request):
-    if request.path == '/forum/': # Pagina forum da home, mostrar tudo ativo.
-        postagens = models.PostagemForum.objects.filter(ativo=True)
-        template_view = 'lista-postagem-forum.html' # lista de post da rota /forum/
-    else: # Essa parte mostra no Dashboard
-        user = request.user 
-        lista_grupos = ['administrador', 'colaborador']
-        template_view = 'dashboard/dash-lista-postagem-forum.html' # template novo que vamos criar 
-        if any(grupo.name in lista_grupos for grupo in user.groups.all()) or user.is_superuser:
-            # Usuário é administrador ou colaborador, pode ver todas as postagens
-            postagens = models.PostagemForum.objects.filter(ativo=True)
-        else:
-            # Usuário é do grupo usuário, pode ver apenas suas próprias postagens
-            postagens = models.PostagemForum.objects.filter(usuario=user)
-    context = {'postagens': postagens}
-    return render(request, template_view, context)

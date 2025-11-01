@@ -10,12 +10,12 @@
 				<p>Você tem certeza de que deseja excluir "{{ postagem.titulo }}"?</p> 
 			</div>
 			<div class="modal-footer">
-    <form method="post" action="{% url 'deletar-postagem-forum' postagem.id %}">
-            {% csrf_token %}
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-danger">Excluir</button>
-        </form>
-    </div>
+				<form method="post" action="{% url 'deletar-postagem-forum' postagem.id %}">
+					{% csrf_token %}
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+					<button type="submit" class="btn btn-danger">Excluir</button>
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

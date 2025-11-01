@@ -1,25 +1,59 @@
 # Corporate System
 
-**Estrutura tem que ficar assim:**
+**Estrutura atual do projeto:**
 
 ```python
 CorporateSystem/
+├── LICENSE
+├── README.md
 ├── apps/
-│   ├── **base**/
+│   ├── base/
 │   │   ├── migrations/
-│   │   ├── **static**/
-│   │   │   ├── **css**/
-│   │   │   ├── **js**/
-│   │   │   ├── **fonts**/
-│   │   │   └── **images**/
-│   │   ├── **templates**/
-│   │   └── __init__.py 
+│   │   ├── static/
+│   │   │   ├── css/
+│   │   │   ├── fonts/
+│   │   │   ├── images/
+│   │   │   │   └── images/
+│   │   │   └── js/
+│   │   ├── templates/
+│   │   └── __init__.py
+│   ├── config/
+│   │   ├── migrations/
+│   │   ├── templates/
+│   │   └── __init__.py
+│   ├── contas/
+│   │   ├── management/
+│   │   ├── migrations/
+│   │   ├── templates/
+│   │   └── __init__.py
+│   ├── forum/
+│   │   ├── migrations/
+│   │   ├── templates/
+│   │   └── __init__.py
+│   ├── pages/
+│   │   ├── migrations/
+│   │   ├── templates/
+│   │   └── __init__.py
+│   └── perfil/
+│       ├── migrations/
+│       ├── templates/
+│       └── __init__.py
+├── config_inicial/
 ├── core/
+│   ├── __init__.py
 │   ├── settings.py
 │   ├── urls.py
 │   ├── asgi.py
-│   ├── **context_processors.py**
+│   ├── context_processors.py
 │   └── wsgi.py
+├── db.sqlite3
+├── fork.txt
+├── info.log
+├── info.log.2025-10-30
 ├── manage.py
-└── requirements.txt
+├── media/
+├── password.txt
+├── requirement_19_out.txt
+├── requirements.txt
+└── requirements_v2.txt
 ```

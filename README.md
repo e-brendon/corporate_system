@@ -38,7 +38,6 @@ CorporateSystem/
 │       ├── migrations/
 │       ├── templates/
 │       └── __init__.py
-├── config_inicial/
 ├── core/
 │   ├── __init__.py
 │   ├── settings.py
@@ -46,13 +45,8 @@ CorporateSystem/
 │   ├── asgi.py
 │   ├── context_processors.py
 │   └── wsgi.py
-├── db.sqlite3
-├── fork.txt
-├── info.log
-├── info.log.2025-10-30
 ├── manage.py
 ├── media/
-├── password.txt
 ├── requirement_19_out.txt
 ├── requirements.txt
 └── requirements_v2.txt

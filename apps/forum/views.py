@@ -3,8 +3,10 @@ from forum.forms import PostagemForumForm
 from django.contrib import messages  
 from forum import models
 from base.utils import add_form_errors_to_messages
+from django.shortcuts import get_object_or_404
 # Create your views here.
 
+# Lista de postagens 
 def lista_postagem_forum(request):
     postagens = models.PostagemForum.objects.filter(ativo=True)
     context = {'postagens': postagens}
@@ -23,7 +25,10 @@ def criar_postagem_forum(request):
             messages.success(request, 'Seu Post foi cadastrado com sucesso!')
             return redirect('lista-postagem-forum')
         else:
-            add_form_errors_to_messages(request, form)
-            
+            add_form_errors_to_messages(request, form)         
     return render(request, 'form-postagem-forum.html', {'form': form})
 
+# Detalhes da postagem (ID)
+def detalhe_postagem_forum(request, id):
+    postagem = get_object_or_404(models.PostagemForum, id=id)
+    return render(request, 'detalhe-postagem-forum.html', {'postagem': postagem})

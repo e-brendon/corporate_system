@@ -7,8 +7,10 @@
             <div class="bg-light p-3">  
                 <div class="d-flex justify-content-between">
                     <span>{{postagem.data_publicacao}}</span><br> 
-                    <div class="div"> 
-                        <a class="btn btn-warning" href="#"><i class="fas fa-edit"></i></a>  
+                    <div class="div">
+                        {% if request.user.is_superuser or request.user == postagem.usuario %}
+                        <a class="btn btn-warning" href="{% url 'editar-postagem-forum' postagem.id %}"><i class="fas fa-edit"></i></a>
+                        {% endif %}
                         <a class="btn btn-danger" href="#"><i class="fas fa-trash"></i></a>
                     </div> 
                 </div> 

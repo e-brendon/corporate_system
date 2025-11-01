@@ -16,3 +16,19 @@ class PostagemForumForm(forms.ModelForm):
                 field.widget.attrs['class'] = 'form-check-input'
             else:
                 field.widget.attrs['class'] = 'form-control'
+
+# Class para editar postagem 
+class EditPostagemForumForm(forms.ModelForm):
+    data_publicacao = forms.DateField(widget=forms.DateInput(format='%Y-%m-%d',attrs={'type': 'date'})) 
+    class Meta:
+        model = PostagemForum
+        fields = ['titulo', 'descricao', 'data_publicacao', 'ativo', 'anexar_imagem']
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super(EditPostagemForumForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if field.widget.__class__ in [forms.CheckboxInput, forms.RadioSelect]:
+                field.widget.attrs['class'] = 'form-check-input'
+            else:
+                field.widget.attrs['class'] = 'form-control'

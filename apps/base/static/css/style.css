@@ -251,13 +251,6 @@ html[data-theme="dark"] .app-navbar .navbar-toggler .fas {
     color: var(--color-navbar-text);
 }
 
-.dashboard-wrapper {
-    display: -webkit-flex;
-    display: flex;
-    min-height: calc(100vh - 70px);
-    background: var(--color-dashboard-wrapper-bg);
-}
-
 .sidebar {
     position: fixed;
     top: 70px;
@@ -309,7 +302,7 @@ html[data-theme="dark"] .app-navbar .navbar-toggler .fas {
     justify-content: flex-start;
     gap: 12px;
     height: 58px;
-    border: none;
+    border: 1px solid transparent;
     border-radius: 16px;
     font-weight: 600;
     font-size: 1rem;
@@ -328,12 +321,14 @@ html[data-theme="dark"] .app-navbar .navbar-toggler .fas {
 .sidebar .sidebar-link.btn-light {
     background: var(--color-sidebar-link-bg);
     color: var(--color-sidebar-link-text);
+    border-color: var(--color-sidebar-link-border);
     -webkit-box-shadow: var(--color-sidebar-link-shadow);
     box-shadow: var(--color-sidebar-link-shadow);
 }
 
 .sidebar .sidebar-link.btn-light:hover {
     background: var(--color-sidebar-link-hover-bg);
+    border-color: var(--color-sidebar-link-border);
     -webkit-transform: translateY(-2px);
     transform: translateY(-2px);
     -webkit-box-shadow: var(--color-sidebar-link-hover-shadow);

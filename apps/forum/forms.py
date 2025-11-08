@@ -1,5 +1,5 @@
 from django import forms
-from .models import PostagemForum
+from .models import PostagemForum, ComentarioPostagemForum
 
 GRUPOS_GESTAO = ('administrador', 'colaborador')
 
@@ -61,3 +61,14 @@ class EditPostagemForumForm(forms.ModelForm):
         if not self.user:
             return False
         return self.user.is_superuser or self.user.groups.filter(name__in=GRUPOS_GESTAO).exists()
+
+
+class ComentarioPostagemForumForm(forms.ModelForm):
+    conteudo = forms.CharField(
+        label='Comentário',
+        widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control', 'placeholder': 'Compartilhe sua opinião...'}),
+    )
+
+    class Meta:
+        model = ComentarioPostagemForum
+        fields = ['conteudo']

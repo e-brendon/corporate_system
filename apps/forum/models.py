@@ -1,7 +1,6 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth import get_user_model
-from django.conf import settings
 
 user = get_user_model()
 
@@ -22,3 +21,30 @@ class PostagemForum(models.Model):
         verbose_name = 'Postagem Forum'
         verbose_name_plural = 'Postagem Forum'
         ordering = ['-data_criacao']
+
+
+class ComentarioPostagemForum(models.Model):
+    postagem = models.ForeignKey(
+        PostagemForum,
+        related_name='comentarios',
+        on_delete=models.CASCADE,
+    )
+    usuario = models.ForeignKey(user, related_name='comentarios_forum', on_delete=models.CASCADE)
+    conteudo = models.TextField('Comentário', max_length=750)
+    parent = models.ForeignKey(
+        'self',
+        null=True,
+        blank=True,
+        related_name='respostas',
+        on_delete=models.CASCADE,
+    )
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Comentário de {self.usuario} em {self.postagem}"
+
+    class Meta:
+        verbose_name = 'Comentário da Postagem'
+        verbose_name_plural = 'Comentários das Postagens'
+        ordering = ['criado_em']

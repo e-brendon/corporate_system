@@ -4,8 +4,10 @@ from django.db import OperationalError, ProgrammingError
 from django.shortcuts import render, redirect
 
 from forum.models import PostagemForum
-from config.forms import EmpresaContatoForm
-from config.models import EmpresaContato
+from django.db.models import Count, Q
+
+from config.forms import EmpresaContatoForm, HomePageConfigForm
+from config.models import EmpresaContato, HomePageConfig
 
 GRUPOS_GESTAO = ['administrador', 'colaborador']
 
@@ -58,3 +60,22 @@ def editar_informacoes_empresa(request):
     else:
         form = EmpresaContatoForm(instance=contato)
     return render(request, 'empresa-contato-form.html', {'form': form})
+
+
+@login_required
+def configurar_pagina_inicial(request):
+    if not _usuario_gestor(request.user):
+        messages.error(request, 'Você não tem permissão para alterar essas informações.')
+        return redirect('configuracao')
+    config = HomePageConfig.obter_unico()
+    if request.method == 'POST':
+        form = HomePageConfigForm(request.POST, instance=config)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Configurações da página inicial salvas com sucesso!')
+            return redirect('configuracao')
+        else:
+            messages.error(request, 'Corrija os erros abaixo antes de salvar.')
+    else:
+        form = HomePageConfigForm(instance=config)
+    return render(request, 'homepage-config-form.html', {'form': form})

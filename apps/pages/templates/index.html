@@ -1,14 +1,78 @@
 {% extends 'base.html' %}
-{% block title %}Inicio{% endblock %}
+{% block title %}Início{% endblock %}
 {% block content %}
-    <div class="container mt-3"> 
-        {% if user.is_authenticated %}
-        <h4>Olá {{user.first_name}} {{user.last_name}}, </h4>
-        <h6>Bem Vindo(a)</h6>
-        {% endif %} 
-
-        <p>Pagina 1</p>
-        <p>Testando o context Global</p>
-        <p>{{social}}</p>
+<div class="container mt-4">
+    {% if user.is_authenticated %}
+    <div class="mb-4">
+        <h4 class="mb-0">Olá, {{ user.first_name }} {{ user.last_name }}!</h4>
+        <p class="text-muted">Bem-vindo(a) de volta.</p>
     </div>
+    {% endif %}
+
+    {% if homepage_config and homepage_config.mostrar_ultimas_postagens %}
+    <section class="mb-5">
+        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+            <h3 class="section-title">Últimas postagens</h3>
+        </div>
+        <div class="row g-3">
+            {% for postagem in latest_posts %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card post-card h-100">
+                    <div class="card-body">
+                        <small class="text-muted">{{ postagem.data_publicacao|default:postagem.data_criacao|date:"d \d\e F \d\e Y" }}</small>
+                        <h5 class="mt-2">{{ postagem.titulo }}</h5>
+                        <p class="text-muted small">{{ postagem.descricao|striptags|truncatechars:120 }}</p>
+                        <a class="btn btn-link p-0" href="{% url 'detalhe-postagem-forum' postagem.id %}">Ver detalhes</a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">Nenhuma postagem disponível.</p>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if homepage_config and homepage_config.mostrar_postagens_interagidas %}
+    <section class="mb-5">
+        <div class="section-header d-flex justify-content-between align-items-center mb-3">
+            <h3 class="section-title">Mais interagidas</h3>
+        </div>
+        <div class="row g-3">
+            {% for postagem in engaged_posts %}
+            <div class="col-lg-4 col-md-6">
+                <div class="card post-card h-100">
+                    <div class="card-body">
+                        <small class="text-muted">{{ postagem.data_publicacao|default:postagem.data_criacao|date:"d \d\e F \d\e Y" }}</small>
+                        <h5 class="mt-2">{{ postagem.titulo }}</h5>
+                        <p class="text-muted small">{{ postagem.descricao|striptags|truncatechars:120 }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="badge bg-secondary">Comentários: {{ postagem.total_interacoes|default:0 }}</span>
+                            <a class="btn btn-link p-0" href="{% url 'detalhe-postagem-forum' postagem.id %}">Ver detalhes</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">Nenhuma interação registrada ainda.</p>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    {% if homepage_config and homepage_config.mostrar_secao_sobre %}
+    <section>
+        <div class="card post-card">
+            <div class="card-body">
+                <h3>Sobre nós</h3>
+                <p class="text-muted">Em breve adicionaremos informações sobre a empresa neste espaço.</p>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    {% if not homepage_config %}
+    <p class="text-muted">Configure a página inicial em Configurações &gt; Sistema para exibir conteúdos aqui.</p>
+    {% endif %}
+</div>
 {% endblock %}

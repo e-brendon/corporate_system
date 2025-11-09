@@ -20,7 +20,8 @@
         <ul>
             {% if can_manage_users %}
             <li><a href="{% url 'editar-informacoes-empresa' %}">Redes sociais</a></li>
-            <li><a href="#">Pagina Inicial</a></li>
+            <li><a href="{% url 'configurar-pagina-inicial' %}">Configurar Página Inicial</a></li>
+            <li><a href="#">Alterar Banner Inicial</a></li>
             <li><a href="#">Alterar Logo</a></li>
             {% endif %}
             <li><a href="#">Tags/Metas/Robot</a></li>

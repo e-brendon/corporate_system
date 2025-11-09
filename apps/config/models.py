@@ -22,3 +22,24 @@ class EmpresaContato(models.Model):
         if not obj:
             obj = cls.objects.create()
         return obj
+
+
+class HomePageConfig(models.Model):
+    mostrar_ultimas_postagens = models.BooleanField('Mostrar últimas 5 postagens', default=False)
+    mostrar_postagens_interagidas = models.BooleanField('Mostrar postagens com mais interações', default=False)
+    mostrar_secao_sobre = models.BooleanField('Mostrar seção "Sobre"', default=False)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = 'Configuração da Página Inicial'
+        verbose_name_plural = 'Configuração da Página Inicial'
+
+    def __str__(self):
+        return 'Configuração da Página Inicial'
+
+    @classmethod
+    def obter_unico(cls):
+        obj = cls.objects.first()
+        if not obj:
+            obj = cls.objects.create()
+        return obj

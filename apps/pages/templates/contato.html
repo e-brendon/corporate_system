@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% block title %}Contato{% endblock %}
+{% block head_extra %}
+{{ block.super }}
+<style>
+.contact-card {
+    background: var(--color-surface);
+    border-radius: 26px;
+    padding: 36px;
+    box-shadow: 0 32px 60px rgba(5, 10, 20, 0.55);
+    border: 1px solid var(--color-border);
+    color: var(--color-body-text);
+}
+.contact-card h2 {
+    font-weight: 700;
+    color: var(--color-body-text);
+}
+.contact-card .contact-description {
+    color: var(--color-text-muted);
+}
+.contact-channel {
+    background: linear-gradient(135deg, rgba(6, 9, 18, 0.95), rgba(13, 16, 28, 0.9));
+    border-radius: 16px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--color-body-text);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 18px 35px rgba(3, 5, 11, 0.8);
+}
+.channel-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: inherit;
+}
+.channel-info .icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.15rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.8);
+}
+.icon-instagram,
+.icon-telegram,
+.icon-discord,
+.icon-facebook {
+    color: rgba(255, 255, 255, 0.85);
+}
+.channel-button {
+    min-width: 100px;
+    border-radius: 8px;
+    border: 1px solid #1f7bff;
+    color: #1f7bff;
+    background: transparent;
+    font-weight: 600;
+}
+.channel-button:hover {
+    background: rgba(31, 123, 255, 0.15);
+    color: #fff;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+            <div class="contact-card">
+                <h2 class="mb-1">Fale com a gente</h2>
+                <p class="contact-description mb-4">Escolha o canal abaixo para conversar com nossa equipe.</p>
+                {% if empresa_contato %}
+                {% if empresa_contato.instagram_url or empresa_contato.telegram_url or empresa_contato.discord_url or empresa_contato.facebook_url %}
+                    {% if empresa_contato.instagram_url %}
+                    <div class="contact-channel">
+                        <div class="channel-info">
+                            <span class="icon icon-instagram"><i class="fab fa-instagram"></i></span>
+                            Instagram
+                        </div>
+                        <a href="{{ empresa_contato.instagram_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary channel-button">Abrir</a>
+                    </div>
+                    {% endif %}
+                    {% if empresa_contato.telegram_url %}
+                    <div class="contact-channel">
+                        <div class="channel-info">
+                            <span class="icon icon-telegram"><i class="fab fa-telegram-plane"></i></span>
+                            Telegram
+                        </div>
+                        <a href="{{ empresa_contato.telegram_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary channel-button">Abrir</a>
+                    </div>
+                    {% endif %}
+                    {% if empresa_contato.discord_url %}
+                    <div class="contact-channel">
+                        <div class="channel-info">
+                            <span class="icon icon-discord"><i class="fab fa-discord"></i></span>
+                            Discord
+                        </div>
+                        <a href="{{ empresa_contato.discord_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary channel-button">Abrir</a>
+                    </div>
+                    {% endif %}
+                    {% if empresa_contato.facebook_url %}
+                    <div class="contact-channel">
+                        <div class="channel-info">
+                            <span class="icon icon-facebook"><i class="fab fa-facebook-f"></i></span>
+                            Facebook
+                        </div>
+                        <a href="{{ empresa_contato.facebook_url }}" target="_blank" rel="noopener" class="btn btn-outline-primary channel-button">Abrir</a>
+                    </div>
+                    {% endif %}
+                {% else %}
+                <p class="text-muted">Nenhuma rede social configurada ainda.</p>
+                {% endif %}
+                {% else %}
+                <p class="text-muted">Nenhuma rede social configurada ainda.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

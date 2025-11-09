@@ -642,6 +642,47 @@ html[data-theme="dark"] .btn-secondary:focus {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
 }
 
+.floating-contacts {
+    position: fixed;
+    right: 24px;
+    bottom: 90px;
+    z-index: 1050;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.floating-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: center;
+    align-items: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    font-size: 1.35rem;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 10px 18px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.floating-btn.telegram,
+.floating-btn.instagram {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.floating-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 30px rgba(0,0,0,0.45);
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
 .modal-content {
     background-color: var(--color-surface);
     color: var(--color-body-text);

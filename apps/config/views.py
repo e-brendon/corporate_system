@@ -1,7 +1,17 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.db import OperationalError, ProgrammingError
+from django.shortcuts import render, redirect
 
 from forum.models import PostagemForum
+from config.forms import EmpresaContatoForm
+from config.models import EmpresaContato
+
+GRUPOS_GESTAO = ['administrador', 'colaborador']
+
+
+def _usuario_gestor(user):
+    return user.is_superuser or user.groups.filter(name__in=GRUPOS_GESTAO).exists()
 
 @login_required
 def painel_view(request):
@@ -25,3 +35,26 @@ def dashboard_lista_postagem_view(request):
         postagens = PostagemForum.objects.filter(usuario=usuario).select_related('usuario')
     context = {'postagens': postagens}
     return render(request, 'dashboard/dash-lista-postagem-forum.html', context)
+
+
+@login_required
+def editar_informacoes_empresa(request):
+    if not _usuario_gestor(request.user):
+        messages.error(request, 'Você não tem permissão para alterar essas informações.')
+        return redirect('configuracao')
+    try:
+        contato = EmpresaContato.obter_unico()
+    except (OperationalError, ProgrammingError):
+        messages.error(request, 'Tabela de contatos da empresa não encontrada. Execute as migrações pendentes.')
+        return redirect('configuracao')
+    if request.method == 'POST':
+        form = EmpresaContatoForm(request.POST, instance=contato)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Informações salvas com sucesso!')
+            return redirect('configuracao')
+        else:
+            messages.error(request, 'Corrija os erros abaixo antes de salvar.')
+    else:
+        form = EmpresaContatoForm(instance=contato)
+    return render(request, 'empresa-contato-form.html', {'form': form})

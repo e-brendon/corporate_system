@@ -106,24 +106,9 @@
         </div>
     </div>
 
-    <footer class="nav-bottom py-2 bg-light mt-auto fixed-bottom">
-        <div class="container-fluid px-4 mt-auto">
-            <div class="d-flex align-items-center justify-content-between">
-                <div class="text-muted">
-                    <a> {{ core }} </a>
-                </div>
-                <div class="text-muted">
-                    <a>Release {{release}} - Patch {{patch}}</a>
-                </div>
-                <a class="text-muted">2025 Copyright &copy; {{ app_name }}</a>
-                <div>
-                    <a class="text-muted" href="#">Politica de Privacidade</a>
-                    &middot;
-                    <a class="text-muted" href="#">Termos &amp; de condições</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    {% include 'components/floating-contacts.html' %}
+
+    {% include 'components/footer.html' %}
 
 	<!-- JS-->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

@@ -1,0 +1,16 @@
+{% if empresa_contato %}
+{% if empresa_contato.instagram_url or empresa_contato.telegram_url %}
+<div class="floating-contacts">
+    {% if empresa_contato.telegram_url %}
+    <a href="{{ empresa_contato.telegram_url }}" class="floating-btn telegram" target="_blank" rel="noopener" aria-label="Telegram">
+        <i class="fab fa-telegram-plane"></i>
+    </a>
+    {% endif %}
+    {% if empresa_contato.instagram_url %}
+    <a href="{{ empresa_contato.instagram_url }}" class="floating-btn instagram" target="_blank" rel="noopener" aria-label="Instagram">
+        <i class="fab fa-instagram"></i>
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+{% endif %}

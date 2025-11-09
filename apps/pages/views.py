@@ -8,3 +8,7 @@ def index(request):
     # messages.warning(request, "Atenção com esta ação.")
     # messages.info(request, "Essa é uma informação.")
     return render(request, 'index.html')
+
+
+def contato(request):
+    return render(request, 'contato.html')

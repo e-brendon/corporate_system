@@ -589,6 +589,59 @@ html[data-theme="dark"] .btn-secondary:focus {
     border-color: var(--color-border);
 }
 
+.forum-surface {
+    background: var(--color-surface);
+    color: var(--color-body-text);
+    border: 1px solid var(--color-border);
+    -webkit-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.forum-comment-card {
+    background: var(--color-surface-alt);
+    color: var(--color-body-text);
+    border: 1px solid var(--color-border);
+    -webkit-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.forum-comment-thread {
+    border-left: 2px solid var(--color-border);
+}
+
+.forum-btn-outline {
+    color: var(--color-body-text);
+    border: 1px solid var(--color-border);
+    background: transparent;
+    -webkit-transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.forum-btn-outline:hover,
+.forum-btn-outline:focus {
+    background: var(--color-border);
+    color: var(--color-body-text);
+}
+
+.forum-date-pill {
+    color: var(--color-body-text);
+}
+
+.rich-text-content,
+.rich-text-content * {
+    color: var(--color-body-text) !important;
+}
+
+.forum-post-body img,
+.forum-comment-body img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 12px 0;
+    border-radius: 12px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+}
+
 .modal-content {
     background-color: var(--color-surface);
     color: var(--color-body-text);
@@ -704,4 +757,15 @@ html[data-theme="dark"] .btn-secondary:focus {
     .page-card-wrapper {
         padding: 24px 12px;
     }
+}
+.dashboard-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--color-dashboard-wrapper-bg);
+    display: -webkit-flex;
+    display: flex;
+    -webkit-align-items: stretch;
+    align-items: stretch;
+    -webkit-justify-content: flex-start;
+    justify-content: flex-start;
 }

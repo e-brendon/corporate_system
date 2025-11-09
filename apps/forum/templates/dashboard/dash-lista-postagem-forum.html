@@ -1,16 +1,16 @@
 {% extends 'base_dashboard.html' %}
 {% block title %}Dashboard - Lista de Postagens{% endblock %}
 {% block content_dash %}
-<div class="p-3">
-    <div class="d-flex justify-content-between mb-3">
+<div class="surface-card table-card">
+    <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-3 mb-4">
         <button class="btn btn-secondary" onclick="location.href='{% url 'criar-postagem-forum' %}'">
             <i class="fas fa-user mx-2"></i> + Criar Postagem</button>
-        <h2>Todas as Postagens </h2>
+        <h2 class="table-title mb-0 me-lg-auto">Todas as Postagens</h2>
     </div>
     <!-- table -->
     <div class="table-responsive">
-        <table class="table table-light">
-            <thead class="table-light">
+        <table class="table theme-table align-middle">
+            <thead>
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Nome/Sobrenome</th>
@@ -21,8 +21,8 @@
                     <th scope="col">Acão</th>
                 </tr>
             </thead>
-            {% for postagem in postagens %}
             <tbody>
+            {% for postagem in postagens %}
                 <tr>
                     <td scope="row">{{ postagem.id }}</td>
                     <td scope="row">{{ postagem.usuario.first_name }} {{ postagem.usuario.last_name }}</td>
@@ -43,10 +43,12 @@
                         {% include "modal-deletar-postagem-forum.html" %}
                     </td>
                 </tr>
-            </tbody>
             {% empty %}
-            <p>Nenhuma poste cadastrado.</p>
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">Nenhuma postagem cadastrada.</td>
+                </tr>
             {% endfor %}
+            </tbody>
         </table>
     </div>
 </div> 

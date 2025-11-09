@@ -2,6 +2,8 @@ from django.contrib import messages
 from datetime import timedelta
 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.utils import timezone
@@ -30,7 +32,12 @@ def _pode_editar_comentario(user, comentario):
 
 # Lista de postagens 
 def lista_postagem_forum(request):
-    postagens = models.PostagemForum.objects.filter(ativo=True).select_related('usuario')
+    hoje = timezone.localdate()
+    postagens = models.PostagemForum.objects.filter(
+        ativo=True,
+    ).filter(
+        Q(data_publicacao__isnull=True) | Q(data_publicacao__lte=hoje)
+    ).select_related('usuario')
     context = {'postagens': postagens}
     return render(request, 'lista-postagens-forum.html', context)
 
@@ -43,8 +50,6 @@ def criar_postagem_forum(request):
         if form.is_valid():
             forum = form.save(commit=False)
             forum.usuario = request.user
-            if not _usuario_gestor(request.user):
-                forum.data_publicacao = timezone.localtime().date()
             forum.save()
             form.save_m2m()
             # Redirecionar para uma página de sucesso ou fazer qualquer outra ação desejada
@@ -57,6 +62,13 @@ def criar_postagem_forum(request):
 # Detalhes da postagem (ID)
 def detalhe_postagem_forum(request, id):
     postagem = get_object_or_404(models.PostagemForum, id=id)
+    hoje = timezone.localdate()
+    usuario_autenticado = request.user.is_authenticated
+    usuario_gestor = _usuario_gestor(request.user) if usuario_autenticado else False
+    is_autor = usuario_autenticado and request.user == postagem.usuario
+    publicada = (postagem.data_publicacao is None) or postagem.data_publicacao <= hoje
+    if not publicada and not (is_autor or usuario_gestor):
+        raise Http404()
     comentarios = (
         postagem.comentarios.filter(parent__isnull=True)
         .select_related('usuario')
@@ -64,16 +76,24 @@ def detalhe_postagem_forum(request, id):
     )
     form = ComentarioPostagemForumForm()
     comentarios_editaveis = set()
-    if request.user.is_authenticated:
+    if usuario_autenticado:
         for comentario in postagem.comentarios.select_related('usuario'):
             if _pode_editar_comentario(request.user, comentario):
                 comentarios_editaveis.add(comentario.id)
+    pode_excluir_postagem = False
+    pode_editar_postagem = False
+    if usuario_autenticado:
+        pode_excluir_postagem = is_autor or usuario_gestor
+        pode_editar_postagem = is_autor or usuario_gestor
     context = {
         'postagem': postagem,
         'comentarios': comentarios,
         'form_comentario': form,
         'comentarios_editaveis': comentarios_editaveis,
-        'usuario_gestor': _usuario_gestor(request.user),
+        'usuario_gestor': usuario_gestor,
+        'pode_excluir_postagem': pode_excluir_postagem,
+        'pode_editar_postagem': pode_editar_postagem,
+        'postagem_agendada': (postagem.data_publicacao and postagem.data_publicacao > hoje),
     }
     return render(request, 'detalhe-postagem-forum.html', context)
 
@@ -100,6 +120,9 @@ def editar_postagem_forum(request, id):
 @login_required
 def deletar_postagem_forum(request, id):
     postagem = get_object_or_404(models.PostagemForum, id=id)
+    if request.user != postagem.usuario and not _usuario_gestor(request.user):
+        messages.error(request, 'Você não tem permissão para remover esta postagem.')
+        return redirect('detalhe-postagem-forum', id=postagem.id)
     if request.method == 'POST':
         postagem.delete()
         messages.error(request, 'Sua postagem '+ postagem.titulo +' foi removido com sucesso!')
